@@ -1,0 +1,312 @@
+-- ============================================
+-- THEBA HUB - SCRIPT BẤT TỬ & KEY SYSTEM (THÊM HIỆU ỨNG ĐỎ KHI NHẬN SÁT THƯƠNG)
+-- ============================================
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local LocalPlayer = Players.LocalPlayer
+
+-- Kiểm tra và xóa GUI cũ nếu đã tồn tại
+if game.CoreGui:FindFirstChild("ThebaHubGui") then
+    game.CoreGui.ThebaHubGui:Destroy()
+end
+
+-- Tạo ScreenGui chính
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "ThebaHubGui"
+ScreenGui.Parent = game.CoreGui
+ScreenGui.ResetOnSpawn = false
+
+-- ============================================
+-- GIAO DIỆN 1: KHUNG NHẬP KEY
+-- ============================================
+local KeyFrame = Instance.new("Frame")
+KeyFrame.Name = "KeyFrame"
+KeyFrame.Size = UDim2.new(0, 240, 0, 160)
+KeyFrame.Position = UDim2.new(0.4, 0, 0.3, 0)
+KeyFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+KeyFrame.BorderSizePixel = 0
+KeyFrame.Active = true
+KeyFrame.Parent = ScreenGui
+
+local KeyCorner = Instance.new("UICorner")
+KeyCorner.CornerRadius = UDim.new(0, 10)
+KeyCorner.Parent = KeyFrame
+
+local KeyStroke = Instance.new("UIStroke")
+KeyStroke.Thickness = 3
+KeyStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+KeyStroke.Parent = KeyFrame
+
+-- Tiêu đề Key System
+local KeyTitle = Instance.new("TextLabel")
+KeyTitle.Size = UDim2.new(1, 0, 0, 35)
+KeyTitle.Position = UDim2.new(0, 0, 0, 5)
+KeyTitle.BackgroundTransparency = 1
+KeyTitle.Text = "THEBA HUB - KEY"
+KeyTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+KeyTitle.TextSize = 16
+KeyTitle.Font = Enum.Font.FredokaOne
+KeyTitle.Parent = KeyFrame
+
+-- Ô nhập Key (TextBox)
+local KeyBox = Instance.new("TextBox")
+KeyBox.Size = UDim2.new(0.85, 0, 0, 35)
+KeyBox.Position = UDim2.new(0.075, 0, 0.35, 0)
+KeyBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+KeyBox.PlaceholderText = "Nhập key vào đây..."
+KeyBox.Text = ""
+KeyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+KeyBox.TextSize = 14
+KeyBox.Font = Enum.Font.SourceSans
+KeyBox.Parent = KeyFrame
+
+local BoxCorner = Instance.new("UICorner")
+BoxCorner.CornerRadius = UDim.new(0, 6)
+BoxCorner.Parent = KeyBox
+
+-- Nút Xác Nhận Key
+local ConfirmBtn = Instance.new("TextButton")
+ConfirmBtn.Size = UDim2.new(0.85, 0, 0, 35)
+ConfirmBtn.Position = UDim2.new(0.075, 0, 0.68, 0)
+ConfirmBtn.BackgroundColor3 = Color3.fromRGB(40, 120, 220)
+ConfirmBtn.Text = "Xác nhận"
+ConfirmBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ConfirmBtn.TextSize = 14
+ConfirmBtn.Font = Enum.Font.SourceSansBold
+ConfirmBtn.Parent = KeyFrame
+
+local ConfirmCorner = Instance.new("UICorner")
+ConfirmCorner.CornerRadius = UDim.new(0, 6)
+ConfirmCorner.Parent = ConfirmBtn
+
+-- Dấu trạng thái (✅ hoặc ❌)
+local StatusLabel = Instance.new("TextLabel")
+StatusLabel.Size = UDim2.new(0, 30, 0, 30)
+StatusLabel.Position = UDim2.new(0.82, 0, 0.02, 0)
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Text = ""
+StatusLabel.TextSize = 18
+StatusLabel.Parent = KeyFrame
+
+
+-- ============================================
+-- GIAO DIỆN 2: KHUNG CHÍNH (THEBA HUB - BẤT TỬ)
+-- ============================================
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 220, 0, 155)
+MainFrame.Position = UDim2.new(0.4, 0, 0.3, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Visible = false -- Ẩn lúc đầu
+MainFrame.Parent = ScreenGui
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 10)
+UICorner.Parent = MainFrame
+
+local UIStroke = Instance.new("UIStroke")
+UIStroke.Thickness = 3
+UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+UIStroke.Parent = MainFrame
+
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Size = UDim2.new(1, 0, 0, 35)
+TitleLabel.Position = UDim2.new(0, 0, 0, 5)
+TitleLabel.BackgroundTransparency = 1
+TitleLabel.Text = "THEBA HUB"
+TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleLabel.TextSize = 18
+TitleLabel.Font = Enum.Font.FredokaOne
+TitleLabel.Parent = MainFrame
+
+local ToggleBtn = Instance.new("TextButton")
+ToggleBtn.Size = UDim2.new(0.85, 0, 0, 45)
+ToggleBtn.Position = UDim2.new(0.075, 0, 0.4, 0)
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
+ToggleBtn.Text = "BẤT TỬ: TẮT"
+ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleBtn.TextSize = 15
+ToggleBtn.Font = Enum.Font.SourceSansBold
+ToggleBtn.Parent = MainFrame
+
+local BtnCorner = Instance.new("UICorner")
+BtnCorner.CornerRadius = UDim.new(0, 8)
+BtnCorner.Parent = ToggleBtn
+
+local MaintenanceLabel = Instance.new("TextLabel")
+MaintenanceLabel.Size = UDim2.new(1, 0, 0, 25)
+MaintenanceLabel.Position = UDim2.new(0, 0, 0.8, 0)
+MaintenanceLabel.BackgroundTransparency = 1
+MaintenanceLabel.Text = "Đang bảo trì"
+MaintenanceLabel.TextColor3 = Color3.fromRGB(255, 165, 0)
+MaintenanceLabel.TextSize = 14
+MaintenanceLabel.Font = Enum.Font.SourceSansItalic
+MaintenanceLabel.Parent = MainFrame
+
+
+-- ============================================
+-- 1. HIỆU ỨNG VIỀN CẦU VỒNG (RAINBOW BORDER)
+-- ============================================
+task.spawn(function()
+    local hue = 0
+    while true do
+        hue = (hue + 0.005) % 1
+        UIStroke.Color = Color3.fromHSV(hue, 1, 1)
+        KeyStroke.Color = Color3.fromHSV(hue, 1, 1)
+        task.wait(0.03)
+    end
+end)
+
+
+-- ============================================
+-- 2. HỆ THỐNG XỬ LÝ KEY
+-- ============================================
+ConfirmBtn.MouseButton1Click:Connect(function()
+    if KeyBox.Text == "deltascriptkrnl" then
+        StatusLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+        StatusLabel.Text = "✔"
+        task.wait(0.5)
+        KeyFrame:Destroy()      -- Xoá hoàn toàn bảng nhập key khỏi màn hình
+        MainFrame.Visible = true -- Hiện menu chính theba hub lên
+    else
+        StatusLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+        StatusLabel.Text = "✖"
+    end
+end)
+
+
+-- ============================================
+-- 3. KÉO DI CHUYỂN CẢ 2 BẢNG (DRAGGABLE)
+-- ============================================
+local function makeDraggable(frame)
+    local dragging, dragInput, dragStart, startPos
+    frame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = frame.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then dragging = false end
+            end)
+        end
+    end)
+    frame.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - dragStart
+            frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+end
+
+makeDraggable(KeyFrame)
+makeDraggable(MainFrame)
+
+
+-- ============================================
+-- 4. LOGIC BẤT TỬ, CHỐNG XÉ & PHÁT ĐỎ KHI NHẬN SÁT THƯƠNG
+-- ============================================
+local isGodMode = false
+local lastValidCFrame = nil
+local lastHealth = 100
+local redTimer = 0
+
+RunService.RenderStepped:Connect(function()
+    local char = LocalPlayer.Character
+    if char then
+        local hrp = char:FindFirstChild("HumanoidRootPart")
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        
+        -- Theo dõi máu để nhận diện khi bị dính sát thương
+        if hum then
+            if hum.Health < lastHealth then
+                redTimer = 0.3 -- Thời gian phát đỏ (giây)
+            end
+            lastHealth = hum.Health
+        end
+
+        -- Hiệu ứng phát đỏ các bộ phận trên cơ thể khi dính đòn
+        if redTimer > 0 then
+            redTimer = redTimer - RunService.RenderStepped:Wait()
+            for _, part in ipairs(char:GetChildren()) do
+                if part:IsA("BasePart") then
+                    part.Color = Color3.fromRGB(255, 0, 0)
+                end
+            end
+        end
+
+        if isGodMode then
+            if hum then
+                hum.MaxHealth = 100000
+                hum.Health = 100000
+                lastHealth = hum.Health -- Giữ đồng bộ máu ảo
+                hum:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
+                hum:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
+                hum:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
+                hum.BreakJointsOnDeath = false
+            end
+            
+            if hrp then
+                if hrp.Position.Y < -500 then
+                    if lastValidCFrame then
+                        hrp.CFrame = lastValidCFrame
+                    else
+                        hrp.CFrame = CFrame.new(0, 50, 0)
+                    end
+                    hrp.Velocity = Vector3.new(0, 0, 0)
+                else
+                    local currentCF = hrp.CFrame
+                    if lastValidCFrame and (currentCF.Position - lastValidCFrame.Position).Magnitude > 150 then
+                        hrp.CFrame = lastValidCFrame
+                        hrp.Velocity = Vector3.new(0, 0, 0)
+                    else
+                        lastValidCFrame = currentCF
+                    end
+                end
+            end
+        else
+            if hrp then
+                lastValidCFrame = hrp.CFrame
+            end
+        end
+    end
+end)
+
+ToggleBtn.MouseButton1Click:Connect(function()
+    isGodMode = not isGodMode
+    
+    if isGodMode then
+        ToggleBtn.Text = "BẤT TỬ: BẬT"
+        ToggleBtn.BackgroundColor3 = Color3.fromRGB(40, 180, 80)
+        
+        local char = LocalPlayer.Character
+        if char and char:FindFirstChildOfClass("Humanoid") then
+            char.Humanoid.MaxHealth = 100000
+            char.Humanoid.Health = 100000
+            lastHealth = char.Humanoid.Health
+        end
+    else
+        ToggleBtn.Text = "BẤT TỬ: TẮT"
+        ToggleBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
+        
+        local char = LocalPlayer.Character
+        if char and char:FindFirstChildOfClass("Humanoid") then
+            local hum = char:FindFirstChildOfClass("Humanoid")
+            hum.MaxHealth = 100
+            hum.Health = 100
+            lastHealth = hum.Health
+            hum:SetStateEnabled(Enum.HumanoidStateType.Dead, true)
+            hum:SetStateEnabled(Enum.HumanoidStateType.FallingDown, true)
+            hum:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, true)
+            hum.BreakJointsOnDeath = true
+        end
+    end
+end)
