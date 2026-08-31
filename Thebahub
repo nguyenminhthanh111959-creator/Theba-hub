@@ -1,0 +1,128 @@
+-- thebameow - JJS Target Teleport Script
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+-- Cấu hình tầm đánh & tốc độ xoay
+local MAX_DISTANCE = 15 -- Khoảng cách tối đa để nhận diện người chơi (tầm đánh)
+local CIRCLE_RADIUS = 4 -- Bán kính vòng tròn teleport xung quanh mục tiêu
+local ROTATION_SPEED = 5 -- Tốc độ xoay vòng tròn
+
+local isEnabled = false
+local angle = 0
+
+-- Tạo GUI Screen
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "TheBameowGui"
+ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ResetOnSpawn = false
+
+-- Khung chính
+local Frame = Instance.new("Frame")
+Frame.Size = UDim2.new(0, 200, 0, 120)
+Frame.Position = UDim2.new(0.5, -100, 0.4, 0)
+Frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+Frame.Active = true
+Frame.Draggable = true -- Có thể kéo thả UI
+Frame.Parent = ScreenGui
+
+local UIStroke = Instance.new("UIStroke")
+UIStroke.Thickness = 3
+UIStroke.Parent = Frame
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 8)
+UICorner.Parent = Frame
+
+-- Tiêu đề (thebameow)
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, 0, 0, 40)
+Title.BackgroundTransparency = 1
+Title.Text = "thebameow"
+Title.Font = Enum.Font.SourceSansBold
+Title.TextSize = 22
+Title.Parent = Frame
+
+-- Nút ON/OFF
+local ToggleBtn = Instance.new("TextButton")
+ToggleBtn.Size = UDim2.new(0.8, 0, 0, 40)
+ToggleBtn.Position = UDim2.new(0.1, 0, 0.5, 0)
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+ToggleBtn.Text = "OFF"
+ToggleBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
+ToggleBtn.Font = Enum.Font.SourceSansBold
+ToggleBtn.TextSize = 18
+ToggleBtn.Parent = Frame
+
+local BtnCorner = Instance.new("UICorner")
+BtnCorner.CornerRadius = UDim.new(0, 6)
+BtnCorner.Parent = ToggleBtn
+
+-- Hiệu ứng Cầu Vồng (RGB)
+local hue = 0
+RunService.RenderStepped:Connect(function(delta)
+    hue = (hue + delta * 0.5) % 1
+    local rainbowColor = Color3.fromHSV(hue, 1, 1)
+    
+    UIStroke.Color = rainbowColor
+    Title.TextColor3 = rainbowColor
+end)
+
+-- Hàm tìm người chơi gần nhất trong tầm đánh
+local function getNearestTarget()
+    local character = LocalPlayer.Character
+    if not character or not character:FindFirstChild("HumanoidRootPart") then return nil end
+    
+    local myPos = character.HumanoidRootPart.Position
+    local nearest = nil
+    local shortestDistance = MAX_DISTANCE
+
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Humanoid") then
+            if player.Character.Humanoid.Health > 0 then
+                local targetPos = player.Character.HumanoidRootPart.Position
+                local dist = (targetPos - myPos).Magnitude
+                if dist < shortestDistance then
+                    shortestDistance = dist
+                    nearest = player.Character
+                end
+            end
+        end
+    end
+    return nearest
+end
+
+-- Bật/Tắt tính năng
+ToggleBtn.MouseButton1Click:Connect(function()
+    isEnabled = not isEnabled
+    if isEnabled then
+        ToggleBtn.Text = "ON"
+        ToggleBtn.TextColor3 = Color3.fromRGB(100, 255, 100)
+    else
+        ToggleBtn.Text = "OFF"
+        ToggleBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
+    end
+end)
+
+-- Vòng lặp Teleport xoay tròn
+RunService.Heartbeat:Connect(function(delta)
+    if not isEnabled then return end
+    
+    local myChar = LocalPlayer.Character
+    if not myChar or not myChar:FindFirstChild("HumanoidRootPart") then return end
+    
+    local targetChar = getNearestTarget()
+    if targetChar and targetChar:FindFirstChild("HumanoidRootPart") then
+        local targetHRP = targetChar.HumanoidRootPart
+        
+        -- Tính toán vị trí xoay vòng tròn
+        angle = angle + (delta * ROTATION_SPEED)
+        local offsetX = math.cos(angle) * CIRCLE_RADIUS
+        local offsetZ = math.sin(angle) * CIRCLE_RADIUS
+        
+        local newPos = targetHRP.Position + Vector3.new(offsetX, 0, offsetZ)
+        
+        -- Teleport và quay mặt về phía đối thủ
+        myChar.HumanoidRootPart.CFrame = CFrame.new(newPos, targetHRP.Position)
+    end
+end)
