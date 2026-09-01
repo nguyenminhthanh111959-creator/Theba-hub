@@ -1,0 +1,130 @@
+-- Delta Executor Script: thebameow (Speed + Stop)
+local CoreGui = game:GetService("CoreGui")
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+-- Xóa Menu cũ nếu đã tồn tại
+if CoreGui:FindFirstChild("thebameow_GUI") then
+    CoreGui.thebameow_GUI:Destroy()
+end
+
+-- Tạo Giao diện UI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "thebameow_GUI"
+ScreenGui.Parent = CoreGui
+
+local Frame = Instance.new("Frame")
+Frame.Size = UDim2.new(0, 240, 0, 110)
+Frame.Position = UDim2.new(0.5, -120, 0.4, 0)
+Frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+Frame.Active = true
+Frame.Draggable = true
+Frame.Parent = ScreenGui
+
+local UIStroke = Instance.new("UIStroke")
+UIStroke.Thickness = 3
+UIStroke.Parent = Frame
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 10)
+UICorner.Parent = Frame
+
+-- Tiêu đề thebameow
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.BackgroundTransparency = 1
+Title.Text = "thebameow"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 18
+Title.Font = Enum.Font.SourceSansBold
+Title.Parent = Frame
+
+-- Ô nhập tốc độ
+local SpeedInput = Instance.new("TextBox")
+SpeedInput.Size = UDim2.new(0, 70, 0, 35)
+SpeedInput.Position = UDim2.new(0.05, 0, 0.45, 0)
+SpeedInput.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+SpeedInput.Text = "100"
+SpeedInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+SpeedInput.TextSize = 16
+SpeedInput.Font = Enum.Font.SourceSans
+SpeedInput.Parent = Frame
+
+local InputCorner = Instance.new("UICorner")
+InputCorner.CornerRadius = UDim.new(0, 6)
+InputCorner.Parent = SpeedInput
+
+-- Nút GO (Chạy nhanh)
+local GoButton = Instance.new("TextButton")
+GoButton.Size = UDim2.new(0, 65, 0, 35)
+GoButton.Position = UDim2.new(0.38, 0, 0.45, 0)
+GoButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+GoButton.Text = "GO"
+GoButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+GoButton.TextSize = 16
+GoButton.Font = Enum.Font.SourceSansBold
+GoButton.Parent = Frame
+
+local GoCorner = Instance.new("UICorner")
+GoCorner.CornerRadius = UDim.new(0, 6)
+GoCorner.Parent = GoButton
+
+-- Nút STOP (Dừng/Trả về tốc độ bình thường)
+local StopButton = Instance.new("TextButton")
+StopButton.Size = UDim2.new(0, 65, 0, 35)
+StopButton.Position = UDim2.new(0.68, 0, 0.45, 0)
+StopButton.BackgroundColor3 = Color3.fromRGB(235, 50, 50)
+StopButton.Text = "STOP"
+StopButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+StopButton.TextSize = 16
+StopButton.Font = Enum.Font.SourceSansBold
+StopButton.Parent = Frame
+
+local StopCorner = Instance.new("UICorner")
+StopCorner.CornerRadius = UDim.new(0, 6)
+StopCorner.Parent = StopButton
+
+-- Hiệu ứng Viền Cầu Vồng (RGB Rainbow)
+task.spawn(function()
+    local hue = 0
+    while task.wait() do
+        hue = (hue + 1) % 360
+        UIStroke.Color = Color3.fromHSV(hue / 360, 1, 1)
+    end
+end)
+
+-- Biến điều khiển tốc độ
+local defaultSpeed = 16
+local targetSpeed = defaultSpeed
+local isSpeedActive = false
+
+-- Xử lý bấm nút GO
+GoButton.MouseButton1Click:Connect(function()
+    local val = tonumber(SpeedInput.Text)
+    if val then
+        targetSpeed = val
+        isSpeedActive = true
+        GoButton.Text = "ON!"
+        task.wait(0.5)
+        GoButton.Text = "GO"
+    end
+end)
+
+-- Xử lý bấm nút STOP
+StopButton.MouseButton1Click:Connect(function()
+    isSpeedActive = false
+    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+        LocalPlayer.Character.Humanoid.WalkSpeed = defaultSpeed
+    end
+    StopButton.Text = "OFF!"
+    task.wait(0.5)
+    StopButton.Text = "STOP"
+end)
+
+-- Duy trì tốc độ liên tục khi nút GO đang bật
+RunService.Stepped:Connect(function()
+    if isSpeedActive and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+        LocalPlayer.Character.Humanoid.WalkSpeed = targetSpeed
+    end
+end)
