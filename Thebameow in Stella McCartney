@@ -1,0 +1,179 @@
+-- Script Cướp Trứng Instant Tele - Made for "thebameow"
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local ToggleHitbox = Instance.new("TextButton")
+local HeightUp = Instance.new("TextButton")
+local HeightDown = Instance.new("TextButton")
+local SetBaseBtn = Instance.new("TextButton")
+local BaseBtn = Instance.new("TextButton")
+
+local FrameUIStroke = Instance.new("UIStroke")
+local BtnUIStroke = Instance.new("UIStroke")
+local SetBtnUIStroke = Instance.new("UIStroke")
+
+-- Cấu hình GUI gốc
+ScreenGui.Name = "thebameowHub"
+ScreenGui.Parent = game:GetService("CoreGui") or game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ResetOnSpawn = false
+
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
+MainFrame.Size = UDim2.new(0, 260, 0, 310)
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+-- Viền Menu Cầu Vồng
+FrameUIStroke.Parent = MainFrame
+FrameUIStroke.Thickness = 3
+
+BtnUIStroke.Parent = BaseBtn
+BtnUIStroke.Thickness = 2
+
+SetBtnUIStroke.Parent = SetBaseBtn
+SetBtnUIStroke.Thickness = 1.5
+
+-- Vòng lặp màu Cầu Vồng (Rainbow Loop)
+task.spawn(function()
+    local hue = 0
+    while task.wait(0.04) do
+        hue = (hue + 0.01) % 1
+        local rainbowColor = Color3.fromHSV(hue, 0.9, 1)
+        FrameUIStroke.Color = rainbowColor
+        BtnUIStroke.Color = rainbowColor
+        SetBtnUIStroke.Color = rainbowColor
+    end
+end)
+
+-- Tiêu đề Menu "thebameow"
+Title.Parent = MainFrame
+Title.Size = UDim2.new(1, 0, 0, 38)
+Title.Text = "thebameow - Hub Cướp Trứng"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 15
+Title.Font = Enum.Font.SourceSansBold
+Title.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+
+-- 1. Nút Tắt Hitbox (Né Đòn)
+local HitboxDisabled = false
+ToggleHitbox.Parent = MainFrame
+ToggleHitbox.Position = UDim2.new(0.08, 0, 0.15, 0)
+ToggleHitbox.Size = UDim2.new(0.84, 0, 0, 32)
+ToggleHitbox.Text = "Hitbox: BÌNH THƯỜNG"
+ToggleHitbox.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+ToggleHitbox.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+ToggleHitbox.MouseButton1Click:Connect(function()
+    HitboxDisabled = not HitboxDisabled
+    if HitboxDisabled then
+        ToggleHitbox.Text = "Hitbox: TẮT (NÉ ĐÒN)"
+        ToggleHitbox.BackgroundColor3 = Color3.fromRGB(0, 160, 70)
+    else
+        ToggleHitbox.Text = "Hitbox: BÌNH THƯỜNG"
+        ToggleHitbox.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    end
+end)
+
+game:GetService("RunService").Stepped:Connect(function()
+    if HitboxDisabled then
+        pcall(function()
+            local char = game.Players.LocalPlayer.Character
+            if char then
+                for _, part in pairs(char:GetChildren()) do
+                    if part:IsA("BasePart") then
+                        part.CanTouch = false
+                    end
+                end
+            end
+        end)
+    end
+end)
+
+-- 2. Chỉnh Cao Nhân Vật
+HeightUp.Parent = MainFrame
+HeightUp.Position = UDim2.new(0.08, 0, 0.28, 0)
+HeightUp.Size = UDim2.new(0.84, 0, 0, 30)
+HeightUp.Text = "Chỉnh Cao Nhân Vật (+5)"
+HeightUp.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
+HeightUp.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+HeightUp.MouseButton1Click:Connect(function()
+    pcall(function()
+        local hum = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if hum then hum.HipHeight = hum.HipHeight + 5 end
+    end)
+end)
+
+-- 3. Chỉnh Thấp Nhân Vật
+HeightDown.Parent = MainFrame
+HeightDown.Position = UDim2.new(0.08, 0, 0.40, 0)
+HeightDown.Size = UDim2.new(0.84, 0, 0, 30)
+HeightDown.Text = "Chỉnh Thấp Nhân Vật (-5)"
+HeightDown.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
+HeightDown.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+HeightDown.MouseButton1Click:Connect(function()
+    pcall(function()
+        local hum = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if hum then hum.HipHeight = hum.HipHeight - 5 end
+    end)
+end)
+
+-- 4. VÒNG LẶP HỒI MÁU SIÊU TỐC (0s Auto Heal)
+game:GetService("RunService").RenderStepped:Connect(function()
+    pcall(function()
+        local hum = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if hum and hum.Health < hum.MaxHealth then
+            hum.Health = hum.MaxHealth
+        end
+    end)
+end)
+
+-- Biến lưu vị trí Căn CỨ
+local SavedBaseCFrame = nil
+
+-- 5. Nút CÀI ĐẶT VỊ TRÍ CĂN CỨ
+SetBaseBtn.Parent = MainFrame
+SetBaseBtn.Position = UDim2.new(0.08, 0, 0.54, 0)
+SetBaseBtn.Size = UDim2.new(0.84, 0, 0, 34)
+SetBaseBtn.Text = "CÀI VỊ TRÍ CĂN CỨ TẠI ĐÂY"
+SetBaseBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+SetBaseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+SetBaseBtn.Font = Enum.Font.SourceSansBold
+
+SetBaseBtn.MouseButton1Click:Connect(function()
+    local root = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if root then
+        SavedBaseCFrame = root.CFrame
+        SetBaseBtn.Text = "ĐÃ LƯU VỊ TRÍ!"
+        task.spawn(function()
+            task.wait(1)
+            SetBaseBtn.Text = "CÀI VỊ TRÍ CĂN CỨ TẠI ĐÂY"
+        end)
+    end
+end)
+
+-- 6. Nút VỀ CĂN CỨ (BẤM LÀ TELE NGAY 0S)
+BaseBtn.Parent = MainFrame
+BaseBtn.Position = UDim2.new(0.08, 0, 0.68, 0)
+BaseBtn.Size = UDim2.new(0.84, 0, 0, 40)
+BaseBtn.Text = "VỀ CĂN CỨ (AUTO HEAL)"
+BaseBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+BaseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+BaseBtn.Font = Enum.Font.SourceSansBold
+BaseBtn.TextSize = 15
+
+BaseBtn.MouseButton1Click:Connect(function()
+    local char = game.Players.LocalPlayer.Character
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+    if root then
+        -- Nếu chưa lưu thì lấy vị trí hiện tại làm điểm mặc định
+        if not SavedBaseCFrame then
+            SavedBaseCFrame = root.CFrame
+        end
+        -- Dịch chuyển tức thì không delay
+        root.CFrame = SavedBaseCFrame
+    end
+end)
