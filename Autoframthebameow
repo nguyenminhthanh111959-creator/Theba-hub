@@ -1,0 +1,315 @@
+-- [[ AUTO FARM - HỆ THỐNG GET KEY & SCRIPT MAIN ]] --
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local VirtualInputManager = game:GetService("VirtualInputManager")
+
+-- Cấu hình
+local CorrectKey = "AURA-KEY-SHY2NXBVB8L"
+local KeyLink = "https://link4sub.com/zvbEPicCpT"
+
+local Config = {
+    AutoKim = false,
+    AutoRom = false,
+    TargetRomCount = 299,
+    CurrentRomCount = 0,
+    RomCFrame = nil
+}
+
+-- ScreenGui Chính
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "AutoFarmGui"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+
+----------------------------------------------------
+-- 1. BẢNG NHẬP KEY (KEY SYSTEM FRAME)
+----------------------------------------------------
+local KeyFrame = Instance.new("Frame")
+KeyFrame.Name = "KeyFrame"
+KeyFrame.Size = UDim2.new(0, 260, 0, 210)
+KeyFrame.Position = UDim2.new(0.5, -130, 0.4, -105)
+KeyFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+KeyFrame.BorderSizePixel = 0
+KeyFrame.Active = true
+KeyFrame.Draggable = true
+KeyFrame.Parent = ScreenGui
+
+local KeyCorner = Instance.new("UICorner", KeyFrame)
+KeyCorner.CornerRadius = UDim.new(0, 8)
+
+local KeyTitle = Instance.new("TextLabel")
+KeyTitle.Size = UDim2.new(1, 0, 0, 35)
+KeyTitle.Text = "HỆ THỐNG XÁC THỰC KEY"
+KeyTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+KeyTitle.TextSize = 14
+KeyTitle.Font = Enum.Font.SourceSansBold
+KeyTitle.BackgroundColor3 = Color3.fromRGB(45, 45, 50)
+KeyTitle.Parent = KeyFrame
+
+local KeyTitleCorner = Instance.new("UICorner", KeyTitle)
+KeyTitleCorner.CornerRadius = UDim.new(0, 8)
+
+-- Ô Nhập Key
+local KeyInput = Instance.new("TextBox")
+KeyInput.Size = UDim2.new(0.85, 0, 0, 35)
+KeyInput.Position = UDim2.new(0.075, 0, 0, 48)
+KeyInput.PlaceholderText = "Nhập Key vào đây..."
+KeyInput.Text = ""
+KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+KeyInput.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+KeyInput.Font = Enum.Font.SourceSans
+KeyInput.TextSize = 13
+KeyInput.Parent = KeyFrame
+
+local KeyInputCorner = Instance.new("UICorner", KeyInput)
+KeyInputCorner.CornerRadius = UDim.new(0, 6)
+
+-- Nút Get Key (Copy Link)
+local BtnGetKey = Instance.new("TextButton")
+BtnGetKey.Size = UDim2.new(0.4, 0, 0, 32)
+BtnGetKey.Position = UDim2.new(0.075, 0, 0, 95)
+BtnGetKey.Text = "🔗 Get Key"
+BtnGetKey.TextColor3 = Color3.fromRGB(255, 255, 255)
+BtnGetKey.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+BtnGetKey.Font = Enum.Font.SourceSansBold
+BtnGetKey.TextSize = 13
+BtnGetKey.Parent = KeyFrame
+
+local BtnGetKeyCorner = Instance.new("UICorner", BtnGetKey)
+BtnGetKeyCorner.CornerRadius = UDim.new(0, 6)
+
+-- Nút Check Key
+local BtnCheckKey = Instance.new("TextButton")
+BtnCheckKey.Size = UDim2.new(0.4, 0, 0, 32)
+BtnCheckKey.Position = UDim2.new(0.525, 0, 0, 95)
+BtnCheckKey.Text = "✔️ Check Key"
+BtnCheckKey.TextColor3 = Color3.fromRGB(255, 255, 255)
+BtnCheckKey.BackgroundColor3 = Color3.fromRGB(50, 180, 50)
+BtnCheckKey.Font = Enum.Font.SourceSansBold
+BtnCheckKey.TextSize = 13
+BtnCheckKey.Parent = KeyFrame
+
+local BtnCheckCorner = Instance.new("UICorner", BtnCheckKey)
+BtnCheckCorner.CornerRadius = UDim.new(0, 6)
+
+-- Thông báo Key
+local KeyStatus = Instance.new("TextLabel")
+KeyStatus.Size = UDim2.new(0.85, 0, 0, 30)
+KeyStatus.Position = UDim2.new(0.075, 0, 0, 138)
+KeyStatus.Text = "Vui lòng lấy Key để sử dụng script!"
+KeyStatus.TextColor3 = Color3.fromRGB(200, 200, 200)
+KeyStatus.TextSize = 12
+KeyStatus.Font = Enum.Font.SourceSans
+KeyStatus.BackgroundTransparency = 1
+KeyStatus.Parent = KeyFrame
+
+
+----------------------------------------------------
+-- 2. MAIN MENU (AUTO FARM FRAME - BỊ ẨN MẶC ĐỊNH)
+----------------------------------------------------
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 220, 0, 320)
+MainFrame.Position = UDim2.new(0.5, -110, 0.35, -160)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Visible = false -- Ẩn cho đến khi nhập đúng Key
+MainFrame.Parent = ScreenGui
+
+local UICorner = Instance.new("UICorner", MainFrame)
+UICorner.CornerRadius = UDim.new(0, 8)
+
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, 0, 0, 35)
+Title.Text = "AUTO FARM"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 16
+Title.Font = Enum.Font.SourceSansBold
+Title.BackgroundColor3 = Color3.fromRGB(45, 45, 50)
+Title.Parent = MainFrame
+
+local TitleCorner = Instance.new("UICorner", Title)
+TitleCorner.CornerRadius = UDim.new(0, 8)
+
+-- NÚT BẬT/TẮT ẨN HIỆN MENU (HÌNH CON CÁ)
+local ToggleButton = Instance.new("ImageButton")
+ToggleButton.Name = "ToggleButton"
+ToggleButton.Size = UDim2.new(0, 50, 0, 50)
+ToggleButton.Position = UDim2.new(0, 20, 0.7, 0)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+ToggleButton.BackgroundTransparency = 0.3
+ToggleButton.Image = "rbxassetid://10850239433" 
+ToggleButton.Active = true
+ToggleButton.Draggable = true
+ToggleButton.Visible = false -- Chỉ hiện khi đúng key
+ToggleButton.Parent = ScreenGui
+
+local ToggleCorner = Instance.new("UICorner", ToggleButton)
+ToggleCorner.CornerRadius = UDim.new(1, 0)
+
+ToggleButton.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
+end)
+
+-- Hàm Tạo Nút Menu Chính
+local function CreateButton(name, text, posY, color)
+    local btn = Instance.new("TextButton")
+    btn.Name = name
+    btn.Size = UDim2.new(0.85, 0, 0, 32)
+    btn.Position = UDim2.new(0.075, 0, 0, posY)
+    btn.Text = text
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextSize = 14
+    btn.Font = Enum.Font.SourceSans
+    btn.BackgroundColor3 = color or Color3.fromRGB(180, 50, 50)
+    btn.Parent = MainFrame
+
+    local btnCorner = Instance.new("UICorner", btn)
+    btnCorner.CornerRadius = UDim.new(0, 6)
+    return btn
+end
+
+local BtnSetRomPos = CreateButton("BtnSetRomPos", "📌 Lưu Vị Trí Rơm", 42, Color3.fromRGB(210, 130, 0))
+local BtnTeleRom = CreateButton("BtnTeleRom", "📍 Tele Tới Rơm", 80, Color3.fromRGB(0, 120, 215))
+local BtnKim = CreateButton("BtnKim", "Lụm Kim: OFF", 118)
+local BtnRom = CreateButton("BtnRom", "Lụm Rơm (0/299): OFF", 156)
+
+local RomInput = Instance.new("TextBox")
+RomInput.Size = UDim2.new(0.85, 0, 0, 30)
+RomInput.Position = UDim2.new(0.075, 0, 0, 194)
+RomInput.PlaceholderText = "Sức chứa tối đa (299)"
+RomInput.Text = "299"
+RomInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+RomInput.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+RomInput.Font = Enum.Font.SourceSans
+RomInput.TextSize = 14
+RomInput.Parent = MainFrame
+
+local InputCorner = Instance.new("UICorner", RomInput)
+InputCorner.CornerRadius = UDim.new(0, 6)
+
+local StatusLabel = Instance.new("TextLabel")
+StatusLabel.Size = UDim2.new(0.85, 0, 0, 25)
+StatusLabel.Position = UDim2.new(0.075, 0, 0, 280)
+StatusLabel.Text = "Hãy bấm 'Lưu Vị Trí Rơm' trước!"
+StatusLabel.TextColor3 = Color3.fromRGB(220, 220, 100)
+StatusLabel.TextSize = 12
+StatusLabel.Font = Enum.Font.SourceSans
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Parent = MainFrame
+
+
+----------------------------------------------------
+-- 3. XỬ LÝ SỰ KIỆN KEY & LOGIC AUTO FARM
+----------------------------------------------------
+
+-- Sao chép Link Key
+BtnGetKey.MouseButton1Click:Connect(function()
+    if setclipboard then
+        setclipboard(KeyLink)
+        KeyStatus.Text = "Đã sao chép Link Get Key!"
+        KeyStatus.TextColor3 = Color3.fromRGB(80, 220, 80)
+    else
+        KeyStatus.Text = "Không hỗ trợ auto copy link!"
+        KeyStatus.TextColor3 = Color3.fromRGB(220, 80, 80)
+    end
+end)
+
+-- Kiểm tra Key
+BtnCheckKey.MouseButton1Click:Connect(function()
+    if KeyInput.Text == CorrectKey then
+        KeyStatus.Text = "Key Chính Xác! Đang mở Script..."
+        KeyStatus.TextColor3 = Color3.fromRGB(80, 250, 80)
+        task.wait(1)
+        
+        KeyFrame:Destroy() -- Xóa bảng Key
+        MainFrame.Visible = true -- Mở Menu Auto Farm
+        ToggleButton.Visible = true -- Hiện nút con cá
+    else
+        KeyStatus.Text = "Key Sai! Vui lòng thử lại."
+        KeyStatus.TextColor3 = Color3.fromRGB(250, 80, 80)
+    end
+end)
+
+RomInput.FocusLost:Connect(function()
+    local num = tonumber(RomInput.Text)
+    if num and num > 0 then
+        Config.TargetRomCount = num
+    else
+        RomInput.Text = tostring(Config.TargetRomCount)
+    end
+end)
+
+local function TeleportTo(cframe)
+    if cframe and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        LocalPlayer.Character.HumanoidRootPart.CFrame = cframe
+    end
+end
+
+local function ClickX10()
+    local char = LocalPlayer.Character
+    local tool = char and char:FindFirstChildOfClass("Tool")
+
+    for i = 1, 10 do
+        if tool then tool:Activate() end
+        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
+        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0)
+    end
+end
+
+-- Lưu vị trí
+BtnSetRomPos.MouseButton1Click:Connect(function()
+    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        Config.RomCFrame = LocalPlayer.Character.HumanoidRootPart.CFrame
+        StatusLabel.Text = "Đã lưu vị trí Đống Rơm!"
+        BtnSetRomPos.BackgroundColor3 = Color3.fromRGB(50, 180, 50)
+    end
+end)
+
+-- Tele Rơm
+BtnTeleRom.MouseButton1Click:Connect(function()
+    if Config.RomCFrame then
+        TeleportTo(Config.RomCFrame)
+        StatusLabel.Text = "Đã Tele tới Rơm"
+    else
+        StatusLabel.Text = "Chưa lưu vị trí Rơm!"
+    end
+end)
+
+-- Loop Auto Rơm
+task.spawn(function()
+    while task.wait(0.1) do
+        if Config.AutoRom then
+            if not Config.RomCFrame then
+                StatusLabel.Text = "Hãy đứng ở đống rơm rồi bấm Lưu!"
+                Config.AutoRom = false
+                BtnRom.Text = "Lụm Rơm: OFF"
+                BtnRom.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
+                continue
+            end
+
+            if Config.CurrentRomCount < Config.TargetRomCount then
+                TeleportTo(Config.RomCFrame)
+                ClickX10()
+                Config.CurrentRomCount = math.min(Config.CurrentRomCount + 10, Config.TargetRomCount)
+                BtnRom.Text = "Lụm Rơm (" .. Config.CurrentRomCount .. "/" .. Config.TargetRomCount .. "): ON"
+            end
+        end
+    end
+end)
+
+-- Bật / Tắt nút
+BtnKim.MouseButton1Click:Connect(function()
+    Config.AutoKim = not Config.AutoKim
+    BtnKim.Text = "Lụm Kim: " .. (Config.AutoKim and "ON" or "OFF")
+    BtnKim.BackgroundColor3 = Config.AutoKim and Color3.fromRGB(50, 180, 50) or Color3.fromRGB(180, 50, 50)
+end)
+
+BtnRom.MouseButton1Click:Connect(function()
+    Config.AutoRom = not Config.AutoRom
+    BtnRom.Text = "Lụm Rơm (" .. Config.CurrentRomCount .. "/" .. Config.TargetRomCount .. "): " .. (Config.AutoRom and "ON" or "OFF")
+    BtnRom.BackgroundColor3 = Config.AutoRom and Color3.fromRGB(50, 180, 50) or Color3.fromRGB(180, 50, 50)
+end)
