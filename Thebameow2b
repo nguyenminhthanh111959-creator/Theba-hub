@@ -1,0 +1,78 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "Hub Script",
+   LoadingTitle = "Đang tải giao diện...",
+   LoadingSubtitle = "by Assistant",
+   ConfigurationSaving = {
+      Enabled = false
+   }
+})
+
+local MainTab = Window:CreateTab("Main", 4483362458) -- Tab chính
+
+-- 1. Nút kích hoạt Chili Script
+MainTab:CreateButton({
+   Name = "Chili Script",
+   Callback = function()
+       print("Loading Chili...")
+       task.spawn(function()
+           loadstring(game:HttpGet("https://raw.githubusercontent.com/tienkhanh1/spicy/main/Chilli.lua"))()
+       end)
+   end,
+})
+
+-- 2. Nút kích hoạt All Game Script (Steal an Egg)
+MainTab:CreateButton({
+   Name = "All Game Script (Steal an Egg)",
+   Callback = function()
+       print("Loading All Game Script...")
+       task.spawn(function()
+           loadstring(game:HttpGet("https://raw.githubusercontent.com/sabscrip-arch/srver/refs/heads/main/Stealanegg"))()
+       end)
+   end,
+})
+
+-- 3. Nút kích hoạt Ajjan Script
+MainTab:CreateButton({
+   Name = "Ajjan Script",
+   Callback = function()
+       print("Loading Ajjan Script...")
+       task.spawn(function()
+           loadstring(game:HttpGet("https://api.luarmor.net/files/v4/loaders/36107afd3107e8d841f9d1a69e2465d4.lua"))()
+       end)
+   end,
+})
+
+-- 4. Nút kích hoạt blyxo Script
+MainTab:CreateButton({
+   Name = "blyxo",
+   Callback = function()
+       print("Loading blyxo Script...")
+       task.spawn(function()
+           loadstring(game:HttpGet("https://flowauth.net/v1/loaders/69d3463240384f3a73fbe32c178093a2.lua"))()
+       end)
+   end,
+})
+
+-- 5. Nút kích hoạt virex Script
+MainTab:CreateButton({
+   Name = "virex",
+   Callback = function()
+       print("Loading virex Script...")
+       task.spawn(function()
+           loadstring(game:HttpGet("https://obfuscatorhub.vercel.app/api/iUVlubxQ"))()
+       end)
+   end,
+})
+
+-- 6. Nút kích hoạt yocudo Script
+MainTab:CreateButton({
+   Name = "yocudo",
+   Callback = function()
+       print("Loading yocudo Script...")
+       task.spawn(function()
+           loadstring(game:HttpGet("https://raw.githubusercontent.com/betdoyvaka/stealanegg/main/Loader.lua"))()
+       end)
+   end,
+})
