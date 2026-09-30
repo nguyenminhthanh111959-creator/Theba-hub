@@ -1,0 +1,132 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "Hub Script",
+   LoadingTitle = "Đang tải giao diện...",
+   LoadingSubtitle = "by Assistant",
+   ConfigurationSaving = {
+      Enabled = false
+   }
+})
+
+-- Tạo các Tab
+local MainTab = Window:CreateTab("Main", 4483362458)
+local Night99Tab = Window:CreateTab("99 Đêm", 4483362458)
+
+---------------------------------------------------------
+-- TAB MAIN
+---------------------------------------------------------
+
+-- 1. Chili Script
+MainTab:CreateButton({
+   Name = "Chili Script",
+   Callback = function()
+       print("Loading Chili...")
+       task.spawn(function()
+           loadstring(game:HttpGet("https://raw.githubusercontent.com/tienkhanh1/spicy/main/Chilli.lua"))()
+       end)
+   end,
+})
+
+-- 2. All Game Script (Steal an Egg)
+MainTab:CreateButton({
+   Name = "All Game Script (Steal an Egg)",
+   Callback = function()
+       print("Loading All Game Script...")
+       task.spawn(function()
+           loadstring(game:HttpGet("https://raw.githubusercontent.com/sabscrip-arch/srver/refs/heads/main/Stealanegg"))()
+       end)
+   end,
+})
+
+-- 3. Ajjan Script
+MainTab:CreateButton({
+   Name = "Ajjan Script",
+   Callback = function()
+       print("Loading Ajjan Script...")
+       task.spawn(function()
+           loadstring(game:HttpGet("https://api.luarmor.net/files/v4/loaders/36107afd3107e8d841f9d1a69e2465d4.lua"))()
+       end)
+   end,
+})
+
+-- 4. blyxo Script
+MainTab:CreateButton({
+   Name = "blyxo",
+   Callback = function()
+       print("Loading blyxo Script...")
+       task.spawn(function()
+           loadstring(game:HttpGet("https://flowauth.net/v1/loaders/69d3463240384f3a73fbe32c178093a2.lua"))()
+       end)
+   end,
+})
+
+-- 5. virex Script
+MainTab:CreateButton({
+   Name = "virex",
+   Callback = function()
+       print("Loading virex Script...")
+       task.spawn(function()
+           loadstring(game:HttpGet("https://obfuscatorhub.vercel.app/api/iUVlubxQ"))()
+       end)
+   end,
+})
+
+-- 6. yocudo Script
+MainTab:CreateButton({
+   Name = "yocudo",
+   Callback = function()
+       print("Loading yocudo Script...")
+       task.spawn(function()
+           loadstring(game:HttpGet("https://raw.githubusercontent.com/betdoyvaka/stealanegg/main/Loader.lua"))()
+       end)
+   end,
+})
+
+-- 7. lonno Script
+MainTab:CreateButton({
+   Name = "lonno",
+   Callback = function()
+       print("Loading lonno Script...")
+       task.spawn(function()
+           loadstring(game:HttpGet("https://raw.githubusercontent.com/lennonxscripts/lennonhubv4/refs/heads/main/stealanegg", true))()
+       end)
+   end,
+})
+
+-- 8. kb Script
+MainTab:CreateButton({
+   Name = "kb",
+   Callback = function()
+       print("Loading kb Script...")
+       task.spawn(function()
+           loadstring(game:HttpGet("https://raw.githubusercontent.com/PulseZax/Loader/refs/heads/main/.lua"))()
+       end)
+   end,
+})
+
+---------------------------------------------------------
+-- TAB 99 ĐÊM
+---------------------------------------------------------
+
+-- 1. Slover Script
+Night99Tab:CreateButton({
+   Name = "slover",
+   Callback = function()
+       print("Loading Slover Script...")
+       task.spawn(function()
+           loadstring(game:HttpGet("https://rawscripts.net/raw/99-Nights-in-the-Forest-SolvexGUI-99-Nights-Script-for-Roblox-2025-57445"))()
+       end)
+   end,
+})
+
+-- 2. Night Script (Mới thêm)
+Night99Tab:CreateButton({
+   Name = "night",
+   Callback = function()
+       print("Loading Night Script...")
+       task.spawn(function()
+           loadstring(game:HttpGet('https://pastefy.app/Dz2gnKLe/raw'))()
+       end)
+   end,
+})
